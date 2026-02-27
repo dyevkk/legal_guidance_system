@@ -47,7 +47,13 @@ router.post('/login', async (req, res) => {
 
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-        if (error) return res.status(400).json({ error: 'Invalid email or password.' });
+        if (error) {
+            console.error('Supabase login error:', error);
+            if (error.status === 0 || (error.message && error.message.includes('fetch'))) {
+                return res.status(503).json({ error: 'Unable to connect to the authentication database. The Supabase project might be paused or blocked by your network.' });
+            }
+            return res.status(400).json({ error: 'Invalid email or password.' });
+        }
 
         const userId = data.user.id;
         const name = data.user.user_metadata?.name || email.split('@')[0];
