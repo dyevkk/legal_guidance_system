@@ -60,20 +60,16 @@ CREATE POLICY "Users can view own profile" ON profiles
   FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update own profile" ON profiles
   FOR UPDATE USING (auth.uid() = id);
-CREATE POLICY "Service role can insert profiles" ON profiles
-  FOR INSERT WITH CHECK (true);
+CREATE POLICY "Users can insert own profile" ON profiles
+  FOR INSERT WITH CHECK (auth.uid() = id);
 
 -- Chat Sessions
 CREATE POLICY "Users can manage own sessions" ON chat_sessions
   USING (auth.uid() = user_id);
-CREATE POLICY "Service role full access chat" ON chat_sessions
-  FOR ALL USING (true);
 
 -- Documents
 CREATE POLICY "Users can manage own documents" ON documents
   USING (auth.uid() = user_id);
-CREATE POLICY "Service role full access docs" ON documents
-  FOR ALL USING (true);
 
 -- =========================================================
 -- Supabase Storage Bucket
