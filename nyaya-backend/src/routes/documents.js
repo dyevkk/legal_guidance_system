@@ -4,6 +4,7 @@ const multer = require('multer');
 const authMiddleware = require('../middleware/auth');
 const supabase = require('../services/supabaseClient');
 const { analyzeDocument, askAboutDocument, extractTextFromImage } = require('../services/geminiService');
+const { storeHashOnChain } = require('../services/blockchain');
 const pdfParse = require('pdf-parse');
 
 // Use memory storage — we'll upload buffer directly to Supabase Storage
@@ -53,6 +54,17 @@ router.post('/upload', authMiddleware, upload.single('document'), async (req, re
         // 3. Analyze with Gemini AI
         const analysis = await analyzeDocument(extractedText, req.file.originalname);
 
+        // 3.5. Store Hash on Blockchain
+        let blockchainTx = null;
+        try {
+            console.log("Storing document hash on local blockchain...");
+            const txData = await storeHashOnChain(extractedText);
+            blockchainTx = txData.txHash;
+            console.log("Blockchain TX:", blockchainTx);
+        } catch (chainErr) {
+            console.warn("Blockchain error (ignored):", chainErr.message);
+        }
+
         // 4. Save metadata to Supabase DB
         const { data: doc, error: dbErr } = await supabase
             .from('documents')
@@ -84,7 +96,8 @@ router.post('/upload', authMiddleware, upload.single('document'), async (req, re
             obligations: doc.obligations,
             rights: doc.rights,
             suggestedSteps: doc.suggested_steps,
-            createdAt: doc.created_at
+            createdAt: doc.created_at,
+            blockchainTx: blockchainTx
         });
     } catch (err) {
         console.error('Upload error:', err);

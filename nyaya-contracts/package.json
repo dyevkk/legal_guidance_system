@@ -1,0 +1,16 @@
+{
+    "name": "nyaya-contracts",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "node": "hardhat node",
+        "deploy:local": "hardhat run scripts/deploy.js --network localhost"
+    },
+    "devDependencies": {
+        "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+        "hardhat": "^2.22.0"
+    },
+    "dependencies": {
+        "dotenv": "^16.4.5"
+    }
+}

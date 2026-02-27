@@ -16,6 +16,7 @@ interface DocResult {
     rights: string[];
     suggestedSteps: string[];
     createdAt: string;
+    blockchainTx?: string;
 }
 
 interface QA { question: string; answer: string; }
@@ -120,6 +121,9 @@ function DocumentsContent() {
                                         <div>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
                                                 <span className="badge" style={{ background: `${docTypeColor[doc.docType]}20`, color: docTypeColor[doc.docType], border: `1px solid ${docTypeColor[doc.docType]}40`, fontSize: '0.65rem' }}>{doc.docType}</span>
+                                                {doc.blockchainTx && (
+                                                    <span title="Verified on Blockchain" style={{ fontSize: '0.65rem', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.3)', padding: '2px 6px', borderRadius: '4px' }}>✓ Chain</span>
+                                                )}
                                             </div>
                                             <div style={{ fontSize: '0.8rem', color: '#D4CCBE', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '170px' }}>{doc.originalName}</div>
                                         </div>
@@ -174,7 +178,18 @@ function DocumentsContent() {
                                         <FileText size={20} color="#C9A227" />
                                         <div>
                                             <div style={{ fontWeight: '700', color: '#F1E8D8', fontSize: '0.95rem' }}>{currentDoc.originalName}</div>
-                                            <span className="badge badge-gold" style={{ marginTop: '4px' }}>{currentDoc.docType}</span>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                                                <span className="badge badge-gold">{currentDoc.docType}</span>
+                                            </div>
+                                            {currentDoc.blockchainTx && (
+                                                <div style={{ marginTop: '8px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.3)', padding: '4px 8px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                        <CheckCircle size={12} />
+                                                        Blockchain Verified
+                                                    </div>
+                                                    <span style={{ color: '#9E9689', fontFamily: 'monospace' }}>Tx: {currentDoc.blockchainTx.substring(0, 10)}...{currentDoc.blockchainTx.slice(-8)}</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                     <div style={{ display: 'flex', gap: '8px' }}>
